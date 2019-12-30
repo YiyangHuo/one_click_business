@@ -1,19 +1,25 @@
-from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, Security, HTTPException
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jwt import PyJWTError
 import jwt
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from starlette.status import HTTP_401_UNAUTHORIZED
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, SecurityScopes
+
+from pydantic import ValidationError
+from typing import List
 
 from data_schema import *
 import databaseapi as db
-
+from exceptions import make_401_exception
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token",
+    scopes={
+        "me": "Read information about the current user.",
+        "items": "Read items."
+    }
+)
 
 SECRET_KEY = "43bbbb5eb942d57de51decbc207b513f896203e665fbc691aaad3e2f9b03fa28"
 ALGORITHM = "HS256"
@@ -29,8 +35,8 @@ def get_password_hash(password):
 
 
 def get_user(username: str):
-    user_val = db.Get(username)
-    if username is not None:
+    user_val = db.GetUser({'username': username})
+    if not username is None:
         return UserFull(**user_val)
 
 
@@ -54,27 +60,36 @@ def create_access_token(*, data: dict, expires_delta: timedelta = None):
     return encoded_jwt
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+async def get_current_user(security_scopes: SecurityScopes, token: str = Depends(oauth2_scheme)):
+
+    if security_scopes.scopes:
+        authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
+    else:
+        authenticate_value = f"Bearer"
+
+    credentials_exception = make_401_exception("Could not validate credentials", authenticate_value)
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
-    except PyJWTError:
+        token_scopes = payload.get("scopes", [])
+        token_data = TokenData(scopes=token_scopes, username=username)
+    except (PyJWTError, ValidationError):
         raise credentials_exception
     user = get_user(username=token_data.username)
     if user is None:
         raise credentials_exception
+
+
+    for scope in security_scopes.scopes:
+        if scope not in token_data.scopes:
+            raise make_401_exception("Not enough permissions", authenticate_value)
     return user
 
 
-async def get_current_active_user(current_user: User = Depends(get_current_user)):
+async def get_current_active_user(current_user: User = Security(get_current_user, scopes=["me"])):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user

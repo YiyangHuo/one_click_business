@@ -1,11 +1,15 @@
-from mongo import db
+import pymongo
+
+mongo_client = pymongo.MongoClient('mongodb://localhost:27017/')
+db = mongo_client['RateAnything']
 
 def GetUser(key):
-    userTable = db.GetTable('Users')
-    tar_user = userTable.find_one(key)
+    tar_user = db['Users'].find_one(key)
+    print(key, tar_user)
     return tar_user
 
 def PutUser(val):
-    userTable = db.GetTable('Users')
-    userTable.insert_one(val)
+    print(val)
+    db['Users'].insert_one(val)
     return
+
