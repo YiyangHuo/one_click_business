@@ -39,12 +39,20 @@ def get_user(username: str):
     if not username is None:
         return UserFull(**user_val)
 
+def verify_scopes(given, request):
+    for i in request:
+        if not i in given:
+            return False
+    return True
 
-def authenticate_user(username: str, password: str):
+
+def authenticate_user(username: str, password: str, request_scopes: List[str]):
     user = get_user(username)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
+        return False
+    if not verify_scopes(user.scopes, request_scopes):
         return False
     return user
 
