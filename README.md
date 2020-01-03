@@ -1,18 +1,31 @@
 # one_click_business
-A REST api framework that allows you focus on your business.
+A REST API framework that allows you to focus on your business.
 
-Reinventing wheel is too boring and meaningless. The majority of businesses are simply CRUD operations and a little data summarization. Now we have plenty of web frameworks, however they still requires plenty of works to have a auth system, permission system and the most importantly, the database. Also, I know that millions of people have briallant ideas in their mind, and some of them must be world changing. However, they might not know programming or building website for now, and their passion may fade when they are trying to enhance themselves with codeing skill.
+Reinventing wheel is too boring and meaningless. According to my observation, the majority of businesses are simply CRUD operations and a little data summarization. We now have plenty of web frameworks, however, they still require plenty of works to have an auth system, permission system and most importantly, the database.
 
-Therefore, I want to build a framework that has auth, permission and database already online and users could put 100% of their work on their own idea, rather than figuring out how to make these infrastructure work.
+Also, millions of people who have brilliant ideas in their minds can't make the idea real simply because they might not know programming or building websites for now.
 
-## Projects based on
+In a word, the programming skills required for building an app is still a barricade for people. Therefore, I want to build a framework that eliminates this barricade even further. I will provide auth, permission and database systems and users could put 100% of their work on their idea, rather than figuring out how to build these infrastructures.
+
+Thus, this project may not be very technically heavy, but I believe it will be useful for idea verifying.
+
+## What we have for now
++ Authentication system with permission scopes
++ MongoDB connection and some helper functions
+
+## My next step
++ Build a compatible client side using React.js(or sth else, idk)
+
+## Projects used
 1. FastAPI:
-  A simple but powerful RESTapi framework, also implemented OAuth2 and OAuth scope. (tbh this project is just a simple demo of FastAPI for now)
-2. Mongodb:
-  Powerful DB, easy to use, friendly for rapid changing, tested by time.
+ A simple but powerful RESTapi framework also implemented OAuth2 and OAuth2 scope.
+2. MongoDB:
+ Powerful DB, easy to use, friendly for rapid changing, tested by time.
+
 
 ## Future works
-+ One click deploy
-+ Admin page and utils
-+ WebApp skeleton code using React.js to interact with server
-+ Maybe other platform? I'm interested in flutter and will look into it in the future.
++ One-click deployment
++ Admin page
++ Data analyzing tools
++ WebApp skeleton code using React.js to interact with the server
++ Maybe other platforms? I'm interested in flutter and will look into it in the future.
