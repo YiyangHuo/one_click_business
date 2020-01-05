@@ -5,11 +5,14 @@ db = mongo_client['RateAnything']
 
 def GetUser(key):
     tar_user = db['Users'].find_one(key)
-    print(key, tar_user)
+    # print(key, tar_user)
     return tar_user
 
 def PutUser(val):
-    print(val)
-    db['Users'].insert_one(val)
-    return
+    # print(val)
+    ins = db['Users'].insert_one(val)
+    return ins.acknowledged
 
+def PutLog(val):
+    ins = db['Log'].insert_one(val)
+    return ins.acknowledged
