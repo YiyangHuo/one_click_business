@@ -14,7 +14,6 @@ class TokenData(BaseModel):
 class User(BaseModel):
     username: str
     email: str = None
-    disabled: bool = None
     scopes: List[str] = []
 
 
