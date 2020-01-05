@@ -47,3 +47,9 @@ async def user_signup(user: UserFull, request: Request):
     user.hashed_password = get_password_hash(user.hashed_password)
     db.PutUser(vars(user))
     return 200
+
+@app.get('/admin/log')
+async def get_log():
+    r = db.GetLog()
+    print(r[0])
+    return {'data': r}

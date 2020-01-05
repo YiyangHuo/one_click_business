@@ -16,3 +16,7 @@ def PutUser(val):
 def PutLog(val):
     ins = db['Log'].insert_one(val)
     return ins.acknowledged
+
+def GetLog(lim=10):
+    qres = db['Log'].find({},{'_id':0})
+    return list(qres)
