@@ -8,13 +8,13 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, Se
 from pydantic import ValidationError
 from typing import List
 
-from data_schema import *
-import databaseapi as db
-from exceptions import make_401_exception
+from routers.infra.data_schema import *
+import routers.infra.databaseapi as db
+from routers.infra.exceptions import make_401_exception
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token",
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/token",
     scopes={
         "me": "Read information about the current user.",
         "items": "Read items."
